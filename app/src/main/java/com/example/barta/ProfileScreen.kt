@@ -6,6 +6,6 @@ import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
 
 @Composable
-fun NotificationsScreen(navController: NavController, modifier: Modifier = Modifier) {
-    Text("여기는 알림 화면입니다")
+fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
+    Text("여기는 마이페이지 화면입니다")
 }
