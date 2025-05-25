@@ -32,10 +32,14 @@ fun BartaAppMain() {
                 elevation = 8.dp
             ) {
                 items.forEach { NavigationBar ->
+                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == NavigationBar.route
+
                     BottomNavigationItem(
                         icon = {
                             Icon(
-                                painter = painterResource(id = NavigationBar.icon),
+                                painter = painterResource(
+                                    id = if (selected) NavigationBar.selectedIcon else NavigationBar.icon
+                                ),
                                 contentDescription = NavigationBar.label,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -43,8 +47,12 @@ fun BartaAppMain() {
                         label = {
                             Text(
                                 text = NavigationBar.label,
-                                style = typography.caption)},
-                        selected = navController.currentBackStackEntryAsState().value?.destination?.route == NavigationBar.route,
+                                style = typography.caption
+                            )
+                        },
+                        selected = selected,
+                        selectedContentColor = color.primaryOrange,
+                        unselectedContentColor = color.textGray2,
                         onClick = {
                             navController.navigate(NavigationBar.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
