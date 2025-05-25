@@ -12,6 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.barta.ui.theme.BartaTheme
+import com.example.barta.util.Step
+import com.example.barta.util.parseChaptersFromDescription
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,19 +28,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun BartaAppMAin() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            HomeScreen(navController)
-        }
-        composable("player/{videoId}") { backStackEntry ->
-            val videoId = backStackEntry.arguments?.getString("videoId") ?: ""
-            PlayerScreen(videoId)
-        }
-    }
-}
+//@Composable
+//fun BartaNavRoot() {
+//    val navController = rememberNavController()
+//    NavHost(navController = navController, startDestination = "home") {
+//        composable("home") {
+//            HomeScreen(navController)
+//        }
+//        composable("player/{videoId}") { backStackEntry ->
+//            val videoId = backStackEntry.arguments?.getString("videoId") ?: ""
+//
+//
+//            PlayerScreen(videoId= videoId, navController= navController)
+//        }
+//    }
+//}
 
 @Preview(showBackground = true)
 @Composable

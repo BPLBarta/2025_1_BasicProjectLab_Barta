@@ -81,6 +81,11 @@ fun BartaAppMain() {
             composable(NavigationBar.Profile.route) {
                 ProfileScreen(navController, modifier = Modifier.padding(innerPadding))
             }
+            composable("player/{videoId}") { backStackEntry ->
+                val videoId = backStackEntry.arguments?.getString("videoId") ?: ""
+                PlayerScreen(videoId = videoId, navController = navController)
+            }
+
         }
     }
 }
