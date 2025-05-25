@@ -132,10 +132,32 @@ val suiteFontTypography = Typography(
 
 @Composable
 fun BartaTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colors = DarkColorPalette,
-        typography = MaterialTheme.typography,
-        shapes = MaterialTheme.shapes,
-        content = content
+    val bartaPalette = BartaPalette(
+        primaryOrange = Color(0xFFFBAA73),
+        textWhite = Color(0xFFFFFFFF),
+        textBlack = Color(0xFF000000),
+        textGray1 = Color(0xFFBFBFBF),
+        textGray2 = Color(0xFF5C5C5C),
+        backgroundGray1 = Color(0xFFFBFBFB),
+        backgroundGray2 = Color(0xFFF2F2F2),
+        backgroundWhite = Color(0xFFFFFFFF),
+        recipeBoxGray = Color(0xFF7A7A7A),
+        backgroundOverlayOrange = Color(0xE6FCECD7),
+        focusOverlayBlack50 = Color(0x7F000000),
+        focusOverlayBlack60 = Color(0x99000000),
+        highlightRed = Color(0xFFC70000),
+        dividerGray = Color(0xFFE8E8E8),
+        progress = Color(0xFF00FF88),
+        timer1 = Color(0xFFD9D9D9),
+        timer2 = Color(0xFFA2A2A2),
+        timerProgress = Color(0xFFFF686B)
     )
+
+    CompositionLocalProvider(LocalBartaPalette provides bartaPalette) {
+        MaterialTheme(
+            typography = suiteFontTypography,
+            shapes = MaterialTheme.shapes,
+            content = content
+        )
+    }
 }
