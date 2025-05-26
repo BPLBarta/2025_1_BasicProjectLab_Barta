@@ -1,56 +1,87 @@
 package com.example.barta
 
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.example.barta.util.Step
-import com.example.barta.util.fetchYoutubeDescription
-import com.example.barta.util.parseChaptersFromDescription
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.example.barta.util.*
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.example.barta.util.getDefaultStepSummaries
+
 
 
 @Composable
 fun PlayerScreen(videoId: String, navController: NavController) {
-    val context = LocalContext.current
     val tracker = remember { YouTubePlayerTracker() }
     val handler = remember { Handler(Looper.getMainLooper()) }
-    var currentStepIndex by remember { mutableStateOf(0) }
-    var youTubePlayer: YouTubePlayer? by remember { mutableStateOf(null) }
+    val youTubePlayerRef = remember { mutableStateOf<YouTubePlayer?>(null) }
+
     var steps by remember { mutableStateOf<List<Step>>(emptyList()) }
+    var transcripts by remember { mutableStateOf<List<TranscriptItem>>(emptyList()) }
+    var currentStepIndex by remember { mutableStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
+
+    val summaries = remember { mutableStateListOf<String>() }
 
     val apiKey = BuildConfig.YOUTUBE_API_KEY
 
+    // ✅ 자막과 챕터 가져오기
     LaunchedEffect(videoId) {
         val description = fetchYoutubeDescription(videoId, apiKey)
-        steps = parseChaptersFromDescription(description)
+        val fetchedSteps = parseChaptersFromDescription(description)
+        val fetchedTranscripts = fetchTranscript(videoId)
+
+        steps = fetchedSteps
+        transcripts = fetchedTranscripts
     }
 
+//       ✅ step별 자막 정리 후 요약 요청
+//    향후 필요한 주석입니다.
+//    LaunchedEffect(steps, transcripts) {
+//        if (steps.isEmpty() || transcripts.isEmpty()) return@LaunchedEffect
+//        val grouped = groupTranscriptByStep(steps, transcripts)
+//        summaries.clear()
+//        grouped.forEach { (_, lines) ->
+//            val merged = mergeTranscriptText(lines)
+//            val summary = fetchSummary(merged)
+//            summaries.add(summary)
+//        }
+//    }
+    LaunchedEffect(steps) {
+        if (steps.isEmpty()) return@LaunchedEffect
+
+        summaries.clear()
+
+        val defaultSummaries = getDefaultStepSummaries()
+
+        steps.forEachIndexed { index, _ ->
+            val summary = defaultSummaries.getOrElse(index) { "기본적인 요리 과정입니다." }
+            summaries.add(summary)
+        }
+    }
+
+
+    // ✅ 영상 반복 재생 루프
     val repeatRunnable = remember {
         object : Runnable {
             override fun run() {
                 val current = tracker.currentSecond
                 val currentStep = steps.getOrNull(currentStepIndex)
-                if (currentStep != null) {
-                    if (current >= currentStep.endTime) {
-                        youTubePlayer?.seekTo(currentStep.startTime)
-                    }
+                if (currentStep != null && current >= currentStep.endTime) {
+                    youTubePlayerRef.value?.seekTo(currentStep.startTime)
                 }
                 handler.postDelayed(this, 1000)
             }
@@ -62,22 +93,33 @@ fun PlayerScreen(videoId: String, navController: NavController) {
         onDispose { handler.removeCallbacks(repeatRunnable) }
     }
 
+    // ✅ 로딩 화면
+    if (steps.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    // ✅ 전체 UI
     Column(modifier = Modifier.fillMaxSize()) {
+        // 영상 플레이어
         AndroidView(
             modifier = Modifier.height(200.dp),
             factory = { ctx ->
-                val view = YouTubePlayerView(ctx)
-                view.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                    override fun onReady(player: YouTubePlayer) {
-                        youTubePlayer = player
-                        player.addListener(tracker)
-                        player.loadVideo(videoId, steps.firstOrNull()?.startTime ?: 0f)
-                    }
-                })
-                view
+                YouTubePlayerView(ctx).apply {
+                    addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                        override fun onReady(player: YouTubePlayer) {
+                            youTubePlayerRef.value = player
+                            player.addListener(tracker)
+                            player.loadVideo(videoId, steps.firstOrNull()?.startTime ?: 0f)
+                        }
+                    })
+                }
             }
         )
 
+        // 이전/다음 버튼
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,7 +129,7 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             Button(onClick = {
                 if (currentStepIndex > 0) {
                     currentStepIndex--
-                    youTubePlayer?.seekTo(steps[currentStepIndex].startTime)
+                    youTubePlayerRef.value?.seekTo(steps[currentStepIndex].startTime)
                 }
             }) {
                 Text("이전")
@@ -96,7 +138,7 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             Button(onClick = {
                 if (currentStepIndex < steps.lastIndex) {
                     currentStepIndex++
-                    youTubePlayer?.seekTo(steps[currentStepIndex].startTime)
+                    youTubePlayerRef.value?.seekTo(steps[currentStepIndex].startTime)
                 } else {
                     showDialog = true
                 }
@@ -111,18 +153,40 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             style = MaterialTheme.typography.h6
         )
 
-        Divider()
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(steps) { step ->
-                Text(
-                    text = "${formatTime(step.startTime)} ~ ${formatTime(step.endTime)}: ${step.title}",
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
+        Text(
+            text = "📝 요약 내용",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+// 향후 필요한 주석입니다.
+//        LazyColumn(modifier = Modifier.fillMaxHeight(0.3f)) {
+//            itemsIndexed(summaries) { index, summary ->
+//                Text(
+//                    text = "Step ${index + 1}: $summary",
+//                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+//                    style = MaterialTheme.typography.body2
+//                )
+//            }
+//        }
+        // ✅ 현재 스텝 요약만 표시
+        Card(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth(),
+            elevation = 4.dp
+        ) {
+            Text(
+                text = summaries.getOrNull(currentStepIndex)
+                    ?: "⚠️ 현재 스텝에 대한 요약이 없습니다.",
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.body2
+            )
         }
     }
 
+    // ✅ 요리 완료 알림창
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -131,7 +195,7 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             confirmButton = {
                 Button(onClick = {
                     currentStepIndex = 0
-                    youTubePlayer?.seekTo(steps.getOrNull(0)?.startTime ?: 0f)
+                    youTubePlayerRef.value?.seekTo(steps.firstOrNull()?.startTime ?: 0f)
                     showDialog = false
                 }) {
                     Text("영상 다시 보기")
@@ -139,7 +203,6 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             },
             dismissButton = {
                 Button(onClick = {
-                    showDialog = false
                     navController.navigate("home") {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
