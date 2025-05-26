@@ -62,8 +62,8 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
     val pwFocused by pwInteraction.collectIsFocusedAsState()
 
     // ✅ 조건별 색상 설정
-    val idUnderlineColor = if (id.isNotEmpty() || idFocused) color.primaryOrange else color.textGray1
-    val pwUnderlineColor = if (password.isNotEmpty() || pwFocused) color.primaryOrange else color.textGray1
+    val idUnderlineColor = if (id.isNotEmpty() || idFocused) color.primaryOrange1 else color.textGray1
+    val pwUnderlineColor = if (password.isNotEmpty() || pwFocused) color.primaryOrange1 else color.textGray1
 
     Column(
         modifier = modifier
@@ -82,7 +82,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
         Text(
             text = "BARTA",
-            style = MaterialTheme.typography.h2.copy(color = color.primaryOrange),
+            style = MaterialTheme.typography.h2.copy(color = color.primaryOrange1),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
@@ -97,14 +97,14 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 interactionSource = idInteraction,
-                textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange),
+                textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange1),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = color.backgroundWhite,
                     focusedIndicatorColor = idUnderlineColor,
                     unfocusedIndicatorColor = idUnderlineColor,
                     disabledIndicatorColor = idUnderlineColor,
-                    textColor = color.primaryOrange,
-                    cursorColor = color.primaryOrange
+                    textColor = color.primaryOrange1,
+                    cursorColor = color.primaryOrange1
                 )
             )
 
@@ -132,14 +132,14 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
                 trailingIcon = {
                     Box(modifier = Modifier.size(24.dp))
                 },
-                textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange),
+                textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange1),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = color.backgroundWhite,
                     focusedIndicatorColor = pwUnderlineColor,
                     unfocusedIndicatorColor = pwUnderlineColor,
                     disabledIndicatorColor = pwUnderlineColor,
-                    textColor = color.primaryOrange,
-                    cursorColor = color.primaryOrange
+                    textColor = color.primaryOrange1,
+                    cursorColor = color.primaryOrange1
                 )
             )
 
@@ -202,7 +202,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .height(48.dp)
                 .clip(RoundedCornerShape(30.dp)),
-            colors = ButtonDefaults.buttonColors(backgroundColor = color.primaryOrange)
+            colors = ButtonDefaults.buttonColors(backgroundColor = color.primaryOrange1)
         ) {
             Text("로그인", color = color.textWhite)
         }

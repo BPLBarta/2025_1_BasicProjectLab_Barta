@@ -14,7 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.example.barta.R
 
 data class BartaPalette(
-    val primaryOrange: Color,
+    val primaryOrange1: Color,
+    val primaryOrange2: Color,
     val textWhite: Color,
     val textBlack: Color,
     val textGray1: Color,
@@ -36,7 +37,8 @@ data class BartaPalette(
 
 val LocalBartaPalette = staticCompositionLocalOf {
     BartaPalette(
-        primaryOrange = Color(0xFFFBAA73),
+        primaryOrange1 = Color(0xFFFBAA73),
+        primaryOrange2 = Color(0xFFE5A77E),
         textWhite = Color(0xFFFFFFFF),
         textBlack = Color(0xFF000000),
         textGray1 = Color(0xFFBFBFBF),
@@ -133,7 +135,8 @@ val suiteFontTypography = Typography(
 @Composable
 fun BartaTheme(content: @Composable () -> Unit) {
     val bartaPalette = BartaPalette(
-        primaryOrange = Color(0xFFFBAA73),
+        primaryOrange1 = Color(0xFFFBAA73),
+        primaryOrange2 = Color(0xFFE5A77E),
         textWhite = Color(0xFFFFFFFF),
         textBlack = Color(0xFF000000),
         textGray1 = Color(0xFFBFBFBF),
