@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BartaTheme {
-                Surface(color = MaterialTheme.colors.background) {
+                    Surface(color = MaterialTheme.colors.background) {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
