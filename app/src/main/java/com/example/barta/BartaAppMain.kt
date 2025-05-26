@@ -49,7 +49,7 @@ fun BartaAppMain() {
                             )
                         },
                         selected = selected,
-                        selectedContentColor = color.primaryOrange,
+                        selectedContentColor = color.primaryOrange1,
                         unselectedContentColor = color.textGray2,
                         onClick = {
                             navController.navigate(NavigationBar.route) {

@@ -71,7 +71,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
         Button(
             onClick = { /* 편집 동작 */ },
             shape = RoundedCornerShape(50),
-            colors = ButtonDefaults.buttonColors(backgroundColor = color.primaryOrange),
+            colors = ButtonDefaults.buttonColors(backgroundColor = color.primaryOrange1),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(36.dp)
