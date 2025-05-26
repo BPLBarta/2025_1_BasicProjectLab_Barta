@@ -174,7 +174,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                             backgroundColor = Color.Transparent,
                             focusedBorderColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent,
-                            cursorColor = color.primaryOrange,
+                            cursorColor = color.primaryOrange1,
                             textColor = color.textBlack
                         )
                     )
@@ -246,7 +246,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = color.primaryOrange,
+                    backgroundColor = color.primaryOrange1,
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(50)
