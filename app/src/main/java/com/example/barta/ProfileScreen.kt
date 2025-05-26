@@ -1,5 +1,8 @@
 package com.example.barta
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +23,7 @@ import com.example.barta.ui.theme.LocalBartaPalette
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
@@ -97,14 +101,27 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(15.dp))
 
         // 로그아웃, 계정탈퇴
+
+        val context = LocalContext.current
+
         Text(
             text = "로그아웃",
-            style=MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.subtitle2,
             color = color.highlightRed,
             modifier = Modifier
-                .clickable { /* 로그아웃 동작 */ }
+                .clickable {
+                    val sharedPref = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+                    sharedPref.edit().putBoolean("isLoggedIn", false).apply()
+
+                    // MainActivity 재시작
+                    val intent = Intent(context, MainActivity::class.java)
+                    context.startActivity(intent)
+                    (context as? Activity)?.finish()  // 현재 화면 종료
+                }
                 .padding(vertical = 8.dp)
         )
+
+
         Text(
             text = "계정탈퇴",
             style=MaterialTheme.typography.subtitle2,

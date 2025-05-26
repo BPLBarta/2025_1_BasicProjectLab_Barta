@@ -1,5 +1,8 @@
 package com.example.barta
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.*
@@ -171,8 +175,29 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        val context = LocalContext.current
+        val sharedPref = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+
         Button(
-            onClick = { /* TODO */ },
+            onClick = {
+                if (keepLogin) {
+                    // ✅ "로그인 상태 유지"가 체크된 경우 — true 저장
+                    sharedPref.edit()
+                        .putBoolean("isLoggedIn", true)
+                        .apply()
+                } else {
+                    // ✅ 체크 안 된 경우 — 플래그를 지우거나 false 로 설정
+                    sharedPref.edit()
+                        .putBoolean("isLoggedIn", false)   // 또는 .remove("isLoggedIn")
+                        .apply()
+                }
+
+                // 공통 — 메인 화면으로 이동 & 로그인 화면 제거
+                navController.navigate("bartaAppMain") {
+                    popUpTo("login") { inclusive = true }
+                }
+            },
+            enabled = id.isNotBlank() && password.length >= 8,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
@@ -181,6 +206,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
         ) {
             Text("로그인", color = color.textWhite)
         }
+
 
         Spacer(modifier = Modifier.height(24.dp))
 

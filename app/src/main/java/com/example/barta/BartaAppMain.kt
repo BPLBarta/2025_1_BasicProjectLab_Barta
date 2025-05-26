@@ -27,9 +27,7 @@ fun BartaAppMain() {
         bottomBar = {
             BottomAppBar(
                 backgroundColor = color.backgroundGray1,
-                contentColor = color.textGray2,
-                modifier = Modifier.height(60.dp),
-                elevation = 8.dp
+                modifier = Modifier.height(60.dp)
             ) {
                 items.forEach { NavigationBar ->
                     val selected = navController.currentBackStackEntryAsState().value?.destination?.route == NavigationBar.route
