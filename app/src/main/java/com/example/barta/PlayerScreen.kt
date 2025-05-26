@@ -13,6 +13,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import com.example.barta.util.Step
+import com.example.barta.util.fetchYoutubeDescription
+import com.example.barta.util.parseChaptersFromDescription
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.barta.util.*
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -34,7 +37,9 @@ fun PlayerScreen(videoId: String, navController: NavController) {
     var currentStepIndex by remember { mutableStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
-    val summaries = remember { mutableStateListOf<String>() }
+    // 🎤 STT 상태 변수 추가
+    var listeningText by remember { mutableStateOf("인식 대기중...") }
+    var isCommandMode by remember { mutableStateOf(false) }
 
     val apiKey = BuildConfig.YOUTUBE_API_KEY
 
@@ -80,18 +85,49 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             override fun run() {
                 val current = tracker.currentSecond
                 val currentStep = steps.getOrNull(currentStepIndex)
-                if (currentStep != null && current >= currentStep.endTime) {
-                    youTubePlayerRef.value?.seekTo(currentStep.startTime)
+                if (currentStep != null) {
+                    if (current >= currentStep.endTime) {
+                        youTubePlayer?.seekTo(currentStep.startTime)
+
+    val sttController = remember {
+        STTController(
+            context,
+            onCommandDetected = { command ->
+                if (isCommandMode) {
+                    when {
+                        command.contains("멈춰", ignoreCase = true) -> {
+                            // 영상 멈춤 상태 유지
+                        }
+                        command.contains("다음", ignoreCase = true) -> {
+                            if (currentStepIndex < steps.lastIndex) {
+                                currentStepIndex++
+                                youTubePlayer?.seekTo(steps[currentStepIndex].startTime)
+                            }
+                        }
+                        command.contains("이전", ignoreCase = true) -> {
+                            if (currentStepIndex > 0) {
+                                currentStepIndex--
+                                youTubePlayer?.seekTo(steps[currentStepIndex].startTime)
+                            }
+                        }
+                    }
+                    isCommandMode = false
+                    youTubePlayer?.play()
                 }
-                handler.postDelayed(this, 1000)
+            },
+            onListeningText = { text ->
+                listeningText = text
+            },
+            onWakeWordDetected = {
+                youTubePlayer?.pause()
+                isCommandMode = true
             }
-        }
+        )
     }
 
-    DisposableEffect(Unit) {
-        handler.postDelayed(repeatRunnable, 1000)
-        onDispose { handler.removeCallbacks(repeatRunnable) }
-    }
+    // 🎤 STT 시작 및 종료 처리
+    LaunchedEffect(Unit) { sttController.startListening() }
+    DisposableEffect(Unit) { onDispose { sttController.destroy() } }
 
     // ✅ 로딩 화면
     if (steps.isEmpty()) {
@@ -119,7 +155,15 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             }
         )
 
-        // 이전/다음 버튼
+        // 🎤 STT 상태 표시
+        Text(
+            text = if (isCommandMode) "명령어 모드 (7초)" else "현재 인식: $listeningText",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            style = MaterialTheme.typography.body1
+        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
