@@ -145,7 +145,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                     Spacer(modifier = Modifier.height(animatedSpacerHeight))
 
                     Text(
-                        "레시피 변환하기",
+                        "레시피 불러오기",
                         style = suiteFontTypography.h4,
                         color = Color.White,
                         modifier = Modifier.padding(start = 24.dp)
@@ -256,7 +256,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                 ),
                 shape = RoundedCornerShape(50)
             ) {
-                Text("변환하기", style = suiteFontTypography.button)
+                Text("불러오기", style = suiteFontTypography.button)
             }
         }
     }
