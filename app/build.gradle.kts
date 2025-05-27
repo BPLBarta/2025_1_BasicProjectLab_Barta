@@ -89,8 +89,11 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.3")
     implementation(libs.androidx.annotation)
 
+// ✅ DataStore (Preferences 기반 저장)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-
+    // 이미지 로딩 라이브러리 Coil (Compose 지원)
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
