@@ -88,7 +88,7 @@ class STTController(
     }
 
     fun destroy() {
-        speechRecognizer.destroy()
-        handler?.removeCallbacks(commandTimeoutRunnable!!)
+        speechRecognizer?.destroy()
+        handler?.removeCallbacks(commandTimeoutRunnable ?: return)
     }
 }

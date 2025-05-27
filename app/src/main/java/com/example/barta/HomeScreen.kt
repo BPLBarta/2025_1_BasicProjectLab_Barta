@@ -24,11 +24,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.barta.data.Store.LinkStore
 import com.example.barta.ui.theme.LocalBartaPalette
 import com.example.barta.ui.theme.suiteFontTypography
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.animation.core.animateDpAsState
 import android.view.ViewTreeObserver
+import androidx.compose.ui.platform.LocalContext
+
 
 fun extractVideoId(url: String): String {
     val regex = Regex("(?:v=|be/|embed/)([\\w-]{11})")
@@ -38,6 +41,7 @@ fun extractVideoId(url: String): String {
 @Composable
 fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
     val color = LocalBartaPalette.current
+    val context = LocalContext.current
     var url by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
@@ -236,6 +240,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                 onClick = {
                     val videoId = extractVideoId(url)
                     if (videoId.isNotEmpty()) {
+                        LinkStore.addUrl(url, context)  // ✅ 저장
                         focusManager.clearFocus()
                         navController.navigate("player/$videoId")
                     }
