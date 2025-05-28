@@ -1,5 +1,6 @@
 package com.example.barta
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,13 +25,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.barta.data.store.LinkStore
 import com.example.barta.ui.theme.LocalBartaPalette
 import com.example.barta.ui.theme.suiteFontTypography
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.animation.core.animateDpAsState
 import android.view.ViewTreeObserver
 import androidx.compose.ui.platform.LocalContext
+import com.example.barta.data.store.LinkStore
+import com.example.barta.ui.player.PlayerActivity
 
 
 fun extractVideoId(url: String): String {
@@ -242,7 +244,12 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                     if (videoId.isNotEmpty()) {
                         LinkStore.addUrl(url, context)  // ✅ 저장
                         focusManager.clearFocus()
-                        navController.navigate("player/$videoId")
+
+                        // 🔽 새로 만든 PlayerActivity 실행 (가로 고정됨)
+                        val intent = Intent(context, PlayerActivity::class.java).apply {
+                            putExtra("videoId", videoId)
+                        }
+                        context.startActivity(intent)
                     }
                 },
                 modifier = Modifier

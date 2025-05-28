@@ -23,7 +23,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.barta.data.Store.LinkStore
+import com.example.barta.data.store.LinkStore
 import com.example.barta.ui.theme.LocalBartaPalette
 import com.example.barta.ui.theme.suiteFontTypography
 import com.example.barta.util.extractVideoId
