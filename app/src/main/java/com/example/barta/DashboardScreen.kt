@@ -33,6 +33,9 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+
 
 
 
@@ -87,35 +90,52 @@ fun DashboardScreen(navController: NavController, modifier: Modifier = Modifier)
             // ✅ 검색창
             if (!isLoading && allRecipes.isNotEmpty()) {
                 item {
-                    TextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        modifier = Modifier
-                            .onFocusChanged {
-                                isFocused = it.isFocused
-                                if (!it.isFocused) {
-                                    searchQuery = "" // ✅ 이 줄 추가!
-                                }
-                            }
-                            .fillMaxWidth()
-                            .height(48.dp)
-                            .padding(horizontal = 18.dp)
-                            .clip(RoundedCornerShape(50.dp)),
-                        placeholder = {
-                            if (!isFocused && searchQuery.isEmpty()) {
-                                Text("검색", style = suiteFontTypography.subtitle2, color = color.textGray2)
-                            }
-                        },
-                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                        singleLine = true,
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = color.backgroundGray2,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            cursorColor = color.primaryOrange1
-                        ),
+                    val customTextSelectionColors = TextSelectionColors(
+                        handleColor = color.primaryOrange1,
+                        backgroundColor = color.primaryOrange1
                     )
+                    CompositionLocalProvider(
+                        LocalTextSelectionColors provides customTextSelectionColors
+                    ) {
+                        TextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            modifier = Modifier
+                                .onFocusChanged {
+                                    isFocused = it.isFocused
+                                    if (!it.isFocused) {
+                                        searchQuery = "" // ✅ 이 줄 추가!
+                                    }
+                                }
+                                .fillMaxWidth()
+                                .height(48.dp)
+                                .padding(horizontal = 18.dp)
+                                .clip(RoundedCornerShape(50.dp)),
+                            placeholder = {
+                                if (!isFocused && searchQuery.isEmpty()) {
+                                    Text(
+                                        "검색",
+                                        style = suiteFontTypography.subtitle2,
+                                        color = color.textGray2
+                                    )
+                                }
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = "Search"
+                                )
+                            },
+                            singleLine = true,
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = color.backgroundGray2,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                cursorColor = color.primaryOrange1
+                            ),
+                        )
+                    }
                 }
 
                 item { Spacer(Modifier.height(16.dp)) }
@@ -157,7 +177,7 @@ fun DashboardScreen(navController: NavController, modifier: Modifier = Modifier)
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(RoundedCornerShape(10.dp))
                             .clickable { navController.navigate("player/$videoId") },
                         elevation = 4.dp
                     ) {
