@@ -67,8 +67,7 @@ fun BartaAppMain() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationBar.Home.route,
-            modifier = Modifier.padding(innerPadding)
+            startDestination = NavigationBar.Home.route
         ) {
             composable(NavigationBar.Dashboard.route) {
                 DashboardScreen(navController, modifier = Modifier.padding(innerPadding))
