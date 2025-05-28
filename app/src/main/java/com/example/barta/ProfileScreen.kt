@@ -35,9 +35,9 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .background(color.backgroundWhite)
-            .padding(horizontal = 30.dp)
+            .padding(horizontal = 24.dp)
     ) {
-        Spacer(modifier = Modifier.height(60.dp)) // 마이페이지 위 빈공간
+        Spacer(modifier = Modifier.height(40.dp)) // 마이페이지 위 빈공간
 
         // 상단 제목
         Text(
