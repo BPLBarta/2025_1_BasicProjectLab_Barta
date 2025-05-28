@@ -138,7 +138,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                             "BARTA",
                             style = suiteFontTypography.h3,
                             color = Color.White,
-                            modifier = Modifier.padding(start = 20.dp)
+                            modifier = Modifier.padding(start = 24.dp)
                         )
                     }
 
