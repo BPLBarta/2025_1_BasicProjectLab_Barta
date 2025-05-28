@@ -1,4 +1,4 @@
-package com.example.barta.data.Store
+package com.example.barta.data.store
 
 data class SavedLink(
     val url: String,
