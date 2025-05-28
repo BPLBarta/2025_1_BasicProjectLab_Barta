@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.example.barta.ui.theme.LocalBartaPalette
 
 @Composable
-fun BartaProgressBar(
+fun ProgressBarComponet(
     progress: Float = 0.5f,  // 기본 진행률, 0.0 ~ 1.0
     modifier: Modifier = Modifier
 ) {

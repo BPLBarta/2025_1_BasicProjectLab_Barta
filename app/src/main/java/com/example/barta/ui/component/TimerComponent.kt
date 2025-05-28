@@ -1,5 +1,6 @@
 package com.example.barta.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -8,7 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.example.barta.ui.theme.LocalBartaPalette
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 
 @Composable
 fun TimerComponent(
@@ -17,30 +19,36 @@ fun TimerComponent(
     modifier: Modifier = Modifier
 ) {
     var timeLeft by remember { mutableStateOf(totalTime) }
+    var isRunning by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    var timerJob by remember { mutableStateOf<Job?>(null) }
+
     val color = LocalBartaPalette.current
-
-    LaunchedEffect(Unit) {
-        while (timeLeft > 0) {
-            delay(1000)
-            timeLeft -= 1
-        }
-        onFinish()
-    }
-
-    // 분과 초 계산
-    val minutes = totalTime / 60
-    val seconds = totalTime % 60
-    val timeText = if (seconds > 0 && 60 > seconds) {
-        String.format("%d초", seconds)
-    } else if (seconds == 0) { String.format("%d분", minutes) }
-    else {
-        String.format("%d분\n%d초", minutes, seconds)
-    }
 
     Box(
         modifier = modifier
-            .size(100.dp)  // 전체 크기 지정
-            .padding(16.dp),
+            .size(100.dp)
+            .padding(16.dp)
+            .clickable(
+                indication = null, // ✅ Ripple 제거
+                interactionSource = remember { MutableInteractionSource() } // ✅ 클릭은 유지
+            ) {
+                if (isRunning) {
+                    // 타이머 멈추기
+                    timerJob?.cancel()
+                    isRunning = false
+                } else {
+                    // 타이머 시작 또는 재개
+                    isRunning = true
+                    timerJob = coroutineScope.launch {
+                        while (timeLeft > 0) {
+                            delay(1000)
+                            timeLeft -= 1
+                        }
+                        onFinish()
+                    }
+                }
+            },
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
@@ -50,9 +58,19 @@ fun TimerComponent(
             modifier = Modifier.fillMaxSize()
         )
 
+        val minutes = totalTime / 60
+        val seconds = totalTime % 60
+        val timeText = if (totalTime < 60 || minutes == 0) {
+            String.format("%d초", totalTime)
+        } else if (seconds > 0) {
+            String.format("%d분\n%d초", minutes, seconds)
+        } else {
+            String.format("%d분", minutes)
+        }
+
         Text(
             text = timeText,
-            textAlign = TextAlign.Center,// 원형 중앙에 텍스트 배치
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.subtitle2
         )
     }
