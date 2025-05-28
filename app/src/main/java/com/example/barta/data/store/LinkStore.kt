@@ -1,4 +1,4 @@
-package com.example.barta.data.Store
+package com.example.barta.data.store
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore

@@ -1,6 +1,5 @@
 package com.example.barta
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.barta.data.Store.LinkStore
+import com.example.barta.data.store.LinkStore
 import com.example.barta.ui.theme.suiteFontTypography
 import com.example.barta.util.extractVideoId
 import androidx.compose.ui.draw.clip

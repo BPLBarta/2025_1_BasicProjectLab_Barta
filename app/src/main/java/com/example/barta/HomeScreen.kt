@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.barta.data.Store.LinkStore
+import com.example.barta.data.store.LinkStore
 import com.example.barta.ui.theme.LocalBartaPalette
 import com.example.barta.ui.theme.suiteFontTypography
 import androidx.compose.foundation.layout.WindowInsets
