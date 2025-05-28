@@ -3,8 +3,6 @@ package com.example.barta
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,11 +12,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.example.barta.ui.component.BartaIcon
+import com.example.barta.ui.component.ProgressBarComponet
+import com.example.barta.ui.component.RecipeSubtitle
 import com.example.barta.util.*
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import kotlinx.coroutines.delay
 
 @Composable
 fun PlayerScreen(videoId: String, navController: NavController) {
@@ -91,7 +93,21 @@ fun PlayerScreen(videoId: String, navController: NavController) {
     }
 
     LaunchedEffect(Unit) { sttController.startListening() }
-    DisposableEffect(Unit) { onDispose { sttController.destroy() } }
+
+    LaunchedEffect(currentStepIndex, youTubePlayerRef.value) {
+        while (true) {
+            delay(500)
+            val player = youTubePlayerRef.value ?: continue
+            val currentTime = tracker.currentSecond
+
+            val currentStep = steps.getOrNull(currentStepIndex) ?: continue
+            val endTime = currentStep.endTime
+
+            if (currentTime >= endTime) {
+                player.seekTo(currentStep.startTime)
+            }
+        }
+    }
 
     if (steps.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -100,9 +116,13 @@ fun PlayerScreen(videoId: String, navController: NavController) {
         return
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        val videoModifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(16f / 9f)
+
         AndroidView(
-            modifier = Modifier.height(200.dp),
+            modifier = videoModifier,
             factory = { ctx ->
                 YouTubePlayerView(ctx).apply {
                     addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
@@ -116,15 +136,18 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             }
         )
 
-        Text(
-            text = if (isCommandMode) "명령어 모드 (7초)" else "현재 인식: $listeningText",
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
-            style = MaterialTheme.typography.body1
+        BartaIcon(
+            modifier = Modifier
+                .padding(12.dp)
+                .size(48.dp)
+                .align(Alignment.TopStart)
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(12.dp),
+            horizontalAlignment = Alignment.End
         ) {
             Button(onClick = {
                 if (currentStepIndex > 0) {
@@ -134,6 +157,8 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             }) {
                 Text("이전")
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             Button(onClick = {
                 if (currentStepIndex < steps.lastIndex) {
@@ -147,29 +172,23 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             }
         }
 
-        Text(
-            text = steps.getOrNull(currentStepIndex)?.title ?: "",
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.h6
-        )
-
-        Divider(modifier = Modifier.padding(vertical = 8.dp))
-
-        Text(
-            text = "\uD83D\uDCDD 요약 내용",
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Card(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth(),
-            elevation = 4.dp
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
-            Text(
-                text = summaries.getOrNull(currentStepIndex)
-                    ?: "⚠️ 현재 스텝에 대한 요약이 없습니다.",
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.body2
+            RecipeSubtitle(
+                stepNumber = currentStepIndex + 1,
+                description = summaries.getOrNull(currentStepIndex) ?: "요약 없음",
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            )
+
+            ProgressBarComponet(
+                progress = (currentStepIndex + 1).toFloat() / steps.size.toFloat(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             )
         }
     }
