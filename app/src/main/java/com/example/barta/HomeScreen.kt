@@ -33,7 +33,10 @@ import android.view.ViewTreeObserver
 import androidx.compose.ui.platform.LocalContext
 import com.example.barta.data.store.LinkStore
 import com.example.barta.ui.player.PlayerActivity
-
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 fun extractVideoId(url: String): String {
     val regex = Regex("(?:v=|be/|embed/)([\\w-]{11})")
@@ -155,35 +158,44 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    OutlinedTextField(
-                        value = url,
-                        onValueChange = { url = it },
-                        placeholder = {
-                            if (!isFocused && url.isEmpty()) {
-                                Text(
-                                    "유튜브 URL을 입력해주세요.",
-                                    color = color.textGray1,
-                                    style = suiteFontTypography.body1
-                                )
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp)
-                            .height(48.dp)
-                            .clip(RoundedCornerShape(50))
-                            .background(Color.White),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                        interactionSource = interactionSource,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent,
-                            cursorColor = color.primaryOrange1,
-                            textColor = color.textBlack
-                        )
+                    val customTextSelectionColors = TextSelectionColors(
+                        handleColor = color.primaryOrange1,
+                        backgroundColor = color.primaryOrange1
                     )
+
+                    CompositionLocalProvider(
+                        LocalTextSelectionColors provides customTextSelectionColors
+                    ) {
+                        OutlinedTextField(
+                            value = url,
+                            onValueChange = { url = it },
+                            placeholder = {
+                                if (!isFocused && url.isEmpty()) {
+                                    Text(
+                                        "유튜브 URL을 입력해주세요.",
+                                        color = color.textGray1,
+                                        style = suiteFontTypography.body1
+                                    )
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp)
+                                .height(48.dp)
+                                .clip(RoundedCornerShape(50))
+                                .background(Color.White),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                            interactionSource = interactionSource,
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                backgroundColor = Color.Transparent,
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent,
+                                cursorColor = color.primaryOrange1,
+                                textColor = color.textBlack
+                            )
+                        )
+                    }
                 }
             }
 
@@ -203,36 +215,89 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Box {
-                    Image(
-                        painter = painterResource(id = R.drawable.recent_record),
-                        contentDescription = "최근 레시피",
-                        contentScale = ContentScale.Crop,
+                var hasLaunchedOnce by remember { mutableStateOf(false) }
+                var hasRecipes by remember { mutableStateOf(false) }
+
+                LaunchedEffect(Unit) {
+                    hasLaunchedOnce = true
+                    hasRecipes = LinkStore.youtubeHistory.isNotEmpty()
+                }
+
+                if (hasLaunchedOnce && !hasRecipes) {
+                    // 🔹 레시피가 없을 때만 처음에 보여줌
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(180.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(12.dp),
-                        horizontalAlignment = Alignment.End
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(color.backgroundGray2),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("소불고기", style = suiteFontTypography.h4, color = Color.White)
-                        Text("2025.05.20", style = suiteFontTypography.body1, color = Color.White)
+                        Text(
+                            text = "최근 기록이 없습니다",
+                            style = suiteFontTypography.body1,
+                            color = color.textBlack
+                        )
                     }
+                } else if (LinkStore.youtubeHistory.isNotEmpty()) {
+                    val recentRecipe = LinkStore.youtubeHistory.first()
+                    val videoId = extractVideoId(recentRecipe.url)
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_play),
-                        contentDescription = "Play",
-                        tint = Color.White,
+
+                    Box(
                         modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(12.dp)
-                            .size(24.dp)
-                    )
+                            .clickable {
+                                navController.navigate("player/$videoId")
+                            }
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    ) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(recentRecipe.thumbnailUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = recentRecipe.title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.3f))
+                        )
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_play),
+                            contentDescription = "Play",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(12.dp)
+                                .size(24.dp)
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(12.dp),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text(
+                                text = recentRecipe.title,
+                                style = suiteFontTypography.h4,
+                                color = Color.White,
+                                maxLines = 1
+                            )
+                            Text(
+                                text = recentRecipe.savedAt.substringBefore(" "),
+                                style = suiteFontTypography.body1,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -267,4 +332,4 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
             }
         }
     }
-} /// 수정한다
+}
