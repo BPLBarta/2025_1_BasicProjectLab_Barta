@@ -37,6 +37,7 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.barta.data.getPreparationText
 
 fun extractVideoId(url: String): String {
     val regex = Regex("(?:v=|be/|embed/)([\\w-]{11})")
@@ -285,8 +286,9 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                                 .padding(12.dp),
                             horizontalAlignment = Alignment.End
                         ) {
+                            val prepTitle = getPreparationText(videoId).title
                             Text(
-                                text = recentRecipe.title,
+                                text =prepTitle ,
                                 style = suiteFontTypography.h4,
                                 color = Color.White,
                                 maxLines = 1
