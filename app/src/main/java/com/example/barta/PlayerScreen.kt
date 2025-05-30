@@ -33,6 +33,8 @@ import com.example.barta.data.getPreparationText
 import com.example.barta.ui.theme.LocalBartaPalette
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.ui.platform.LocalConfiguration
 import com.example.barta.ui.theme.suiteFontTypography
 import androidx.compose.ui.graphics.graphicsLayer
 
@@ -146,23 +148,47 @@ fun PlayerScreen(videoId: String, navController: NavController) {
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
-        val videoModifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(16f / 9f)
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            val screenWidth = maxWidth
+            val screenHeight = maxHeight
+            val configuration = LocalConfiguration.current
+            val isPortrait = configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
 
-        AndroidView(
-            modifier = videoModifier,
-            factory = { ctx ->
-                YouTubePlayerView(ctx).apply {
-                    addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                        override fun onReady(player: YouTubePlayer) {
-                            youTubePlayerRef.value = player
-                            player.addListener(tracker)
-                        }
-                    })
-                }
+            val videoModifier = if (isPortrait) {
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f)
+            } else {
+                val calculatedWidth = screenHeight * 16f / 9f
+                Modifier
+                    .width(calculatedWidth)
+                    .height(screenHeight)
             }
-        )
+
+            // 🔲 검은 배경 채우기
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f)
+                    .background(Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                AndroidView(
+                    modifier = videoModifier,
+                    factory = { ctx ->
+                        YouTubePlayerView(ctx).apply {
+                            addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                                override fun onReady(player: YouTubePlayer) {
+                                    youTubePlayerRef.value = player
+                                    player.addListener(tracker)
+                                }
+                            })
+                        }
+                    }
+                )
+            }
+        }
+
 
         // 재료화면
         if (currentStepIndex == -1) {
