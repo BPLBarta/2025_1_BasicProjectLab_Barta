@@ -266,7 +266,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.3f))
+                                .background(Color.Black.copy(alpha = 0.5f))
                         )
 
                         Icon(
