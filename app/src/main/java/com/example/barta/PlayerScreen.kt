@@ -35,6 +35,8 @@ import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.ui.platform.LocalConfiguration
+import com.example.barta.ui.theme.suiteFontTypography
+import androidx.compose.ui.graphics.graphicsLayer
 
 
 @Composable
@@ -190,7 +192,10 @@ fun PlayerScreen(videoId: String, navController: NavController) {
 
         // 재료화면
         if (currentStepIndex == -1) {
-            val prepText = getPreparationText(videoId)
+            val preparationData = getPreparationText(videoId)
+            val prepTitle = preparationData.title
+            val prepText = preparationData.ingredients
+
             val thumbnailUrl = "https://img.youtube.com/vi/$videoId/0.jpg"
 
             // 텍스트 2단 분할
@@ -226,37 +231,69 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                 ) {
                     Box(
                         modifier = Modifier
-                            .width(491.dp)
-                            .heightIn(330.dp)
+                            .width(481.dp)
+                            .heightIn(300.dp)
                             .background(
-                                color = Color(0xFFFCECD7),
+                                color = Color(0xFFFCECD7).copy(alpha=0.95f),
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .padding(20.dp),
-                        contentAlignment = Alignment.Center
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Text(
-                                text = leftText,
-                                style = MaterialTheme.typography.subtitle1,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .wrapContentHeight(align = Alignment.CenterVertically),
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = rightText,
-                                style = MaterialTheme.typography.subtitle1,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .wrapContentHeight(align = Alignment.CenterVertically),
-                                textAlign = TextAlign.Center
-                            )
+                            Spacer(modifier = Modifier.height(7.dp))
+
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
+                                // 🔸 갈색 대각선 배경
+                                Box(
+                                    modifier = Modifier
+                                        .size(width=155.dp, height=26.dp)
+                                        .graphicsLayer {
+                                            rotationZ = -3f
+                                            translationX = 3f
+                                        }
+                                        .background(Color(0xFFE5A77E))
+                                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                                )
+
+                                // 🔸 제목 텍스트 (위에 올려짐)
+                                Text(
+                                    text = prepTitle,
+                                    style = suiteFontTypography.h3,
+                                    color = Color.Black
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(26.dp))
+
+                            // 🔸 이중 분할 텍스트
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = leftText,
+                                    style = suiteFontTypography.subtitle1,
+                                    modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Spacer(modifier = Modifier.width(78.dp)) // 원하는 간격
+
+                                Text(
+                                    text = rightText,
+                                    style = suiteFontTypography.subtitle1,
+                                    modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+
+
                         }
                     }
                 }
@@ -358,28 +395,27 @@ fun PlayerScreen(videoId: String, navController: NavController) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
             backgroundColor = Color(0xFFEFEFEF),
-            modifier = Modifier
-                .width(289.dp) // 너비 조절
-                .heightIn(min = 130.dp), // 높이 조절 (최소값만)// 다이얼로그 배경 색
-            shape = RoundedCornerShape(15.dp), // 둥근 모서리
+            shape = RoundedCornerShape(15.dp),
 
-            title = {
-                Text(
-                    text = "요리가 완성 되었습니다!\n홈 화면으로 돌아가시겠어요?",
-                    style = MaterialTheme.typography.subtitle2,
-                    color = color.textBlack,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-                confirmButton = {
-                    Box(
+            buttons = {
+                Column(
+                    modifier = Modifier
+                        .width(289.dp)
+                        .padding(top = 36.dp, bottom = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // ✅ 여기에 텍스트 위치 마음대로 조정 가능
+                    Text(
+                        text = "요리가 완성 되었습니다!\n홈 화면으로 돌아가시겠어요?",
+                        style = MaterialTheme.typography.subtitle1,
+                        color = color.textBlack,
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Spacer(modifier = Modifier.height(30.dp))
-                        Button(
+                            .padding(bottom = 16.dp)
+                            .fillMaxWidth()
+                    )
+
+                    Button(
                         onClick = {
                             navController.navigate("home") {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -390,24 +426,25 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = color.primaryOrange1, // 오렌지색
+                            backgroundColor = color.primaryOrange1,
                             contentColor = color.textWhite
                         ),
                         shape = RoundedCornerShape(50),
                         modifier = Modifier
-                            .width(136.dp)   // ✅ 버튼 너비
-                            .height(36.dp)   // ✅ 버튼 높이
+                            .width(136.dp)
+                            .height(36.dp)
                     ) {
                         Text(
                             text = "돌아가기",
-                            style = MaterialTheme.typography.subtitle2
+                            style = MaterialTheme.typography.subtitle1
                         )
                     }
                 }
-            },
-            dismissButton = {}
+            }
         )
+
     }
+
 }
 
 fun formatTime(seconds: Float): String {
