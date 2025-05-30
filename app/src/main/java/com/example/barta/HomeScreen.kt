@@ -220,6 +220,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                 var hasRecipes by remember { mutableStateOf(false) }
 
                 LaunchedEffect(Unit) {
+                    LinkStore.loadFromDataStore(context) // ✅ 추가
                     hasLaunchedOnce = true
                     hasRecipes = LinkStore.youtubeHistory.isNotEmpty()
                 }
@@ -251,7 +252,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                                 navController.navigate("player/$videoId")
                             }
                             .fillMaxWidth()
-                            .height(180.dp)
+                            .aspectRatio(16f / 9f)
                             .clip(RoundedCornerShape(12.dp))
                     ) {
                         AsyncImage(
