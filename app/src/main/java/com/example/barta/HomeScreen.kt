@@ -37,6 +37,7 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.barta.data.getPreparationText
 
 fun extractVideoId(url: String): String {
     val regex = Regex("(?:v=|be/|embed/)([\\w-]{11})")
@@ -219,6 +220,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                 var hasRecipes by remember { mutableStateOf(false) }
 
                 LaunchedEffect(Unit) {
+                    LinkStore.loadFromDataStore(context) // ✅ 추가
                     hasLaunchedOnce = true
                     hasRecipes = LinkStore.youtubeHistory.isNotEmpty()
                 }
@@ -250,7 +252,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                                 navController.navigate("player/$videoId")
                             }
                             .fillMaxWidth()
-                            .height(180.dp)
+                            .aspectRatio(16f / 9f)
                             .clip(RoundedCornerShape(12.dp))
                     ) {
                         AsyncImage(
@@ -266,7 +268,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.3f))
+                                .background(Color.Black.copy(alpha = 0.5f))
                         )
 
                         Icon(
@@ -285,8 +287,9 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
                                 .padding(12.dp),
                             horizontalAlignment = Alignment.End
                         ) {
+                            val prepTitle = getPreparationText(videoId).title
                             Text(
-                                text = recentRecipe.title,
+                                text =prepTitle ,
                                 style = suiteFontTypography.h4,
                                 color = Color.White,
                                 maxLines = 1

@@ -11,6 +11,8 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -91,22 +93,30 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
         // 아이디 입력창
         Box(modifier = Modifier.fillMaxWidth()) {
-            TextField(
-                value = id,
-                onValueChange = { id = it },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                interactionSource = idInteraction,
-                textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange1),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = color.backgroundWhite,
-                    focusedIndicatorColor = idUnderlineColor,
-                    unfocusedIndicatorColor = idUnderlineColor,
-                    disabledIndicatorColor = idUnderlineColor,
-                    textColor = color.primaryOrange1,
-                    cursorColor = color.primaryOrange1
-                )
+            val customTextSelectionColors = TextSelectionColors(
+                handleColor = color.primaryOrange1,
+                backgroundColor = color.primaryOrange1
             )
+            CompositionLocalProvider(
+                LocalTextSelectionColors provides customTextSelectionColors
+                ) {
+                    TextField(
+                        value = id,
+                        onValueChange = { id = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        interactionSource = idInteraction,
+                        textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange1),
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = color.backgroundWhite,
+                            focusedIndicatorColor = idUnderlineColor,
+                            unfocusedIndicatorColor = idUnderlineColor,
+                            disabledIndicatorColor = idUnderlineColor,
+                            textColor = color.primaryOrange1,
+                            cursorColor = color.primaryOrange1
+                        )
+                    )
+                }
 
             if (!idFocused && id.isEmpty()) {
                 Text(
