@@ -35,9 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
-
-
-
+import com.example.barta.data.getPreparationText
 
 
 @Composable
@@ -219,8 +217,9 @@ fun DashboardScreen(navController: NavController, modifier: Modifier = Modifier)
                                     .padding(start = 12.dp, end = 12.dp, bottom = 12.dp),
                                 horizontalAlignment = Alignment.End
                             ) {
+                                val prepTitle = getPreparationText(videoId).title
                                 Text(
-                                    text = saved.title,
+                                    text = prepTitle,
                                     style = suiteFontTypography.h4,
                                     color = Color.White,
                                     maxLines = 1
