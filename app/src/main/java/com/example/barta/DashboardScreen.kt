@@ -37,7 +37,6 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import com.example.barta.data.getPreparationText
 
-
 @Composable
 fun DashboardScreen(navController: NavController, modifier: Modifier = Modifier) {
     val context = LocalContext.current
@@ -239,3 +238,4 @@ fun DashboardScreen(navController: NavController, modifier: Modifier = Modifier)
         }
     }
 }
+
