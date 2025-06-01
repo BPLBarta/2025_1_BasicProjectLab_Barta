@@ -18,22 +18,21 @@ import kotlinx.coroutines.*
 @Composable
 fun TimerComponent(
     totalTime: Int = 180,
+    isRunning: Boolean,
     onFinish: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var timeLeft by remember { mutableStateOf(totalTime) }
-    var isRunning by remember { mutableStateOf(false) }
     val color = LocalBartaPalette.current
 
-    // 1초씩 카운트다운
+    // 외부 상태에 따라 타이머 실행
     LaunchedEffect(isRunning, timeLeft) {
         if (isRunning && timeLeft > 0) {
-            while (timeLeft > 0) {
+            while (timeLeft > 0 && isRunning) {
                 delay(1000)
                 timeLeft -= 1
             }
-            isRunning = false
-            onFinish()
+            if (timeLeft == 0) onFinish()
         }
     }
 
@@ -49,17 +48,10 @@ fun TimerComponent(
 
     Box(
         modifier = modifier
-            // 클릭 시 카운트다운 토글
-            .clickable {
-                if (totalTime <= 0) return@clickable
-                isRunning = !isRunning
-            }
-            // 외부에서 Circle 모양과 크기를 지정하므로 여기서는 clip과 background만 처리
             .clip(CircleShape)
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        // 내부는 넘겨받은 크기(modifier)에 맞춰 fillMaxSize
         CircularProgressIndicator(
             progress = progress,
             color = color.timerProgress,
@@ -74,3 +66,4 @@ fun TimerComponent(
         )
     }
 }
+
