@@ -45,7 +45,7 @@ fun extractVideoId(url: String): String {
 }
 
 @Composable
-fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
+fun HomeScreen(navController: NavController, initialUrl: String = "", modifier: Modifier = Modifier) {
     val color = LocalBartaPalette.current
     val context = LocalContext.current
     var url by remember { mutableStateOf("") }

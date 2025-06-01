@@ -23,6 +23,9 @@
                 android:label="@string/title_activity_login" />
         <!-- &lt;!&ndash; ✅ PlayerActivity 등록 &ndash;&gt; -->
         <!-- <activity android:name=".ui.player.PlayerActivity" /> -->
+
+
+
         <activity
             android:name=".ui.player.PlayerActivity"
             android:screenOrientation="landscape"
