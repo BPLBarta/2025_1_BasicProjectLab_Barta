@@ -105,7 +105,13 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             onStart = { isListening = true },
             onResult = { command ->
                 when (command.trim()) {
-                    "다음" -> if (currentStepIndex < steps.lastIndex) currentStepIndex++
+                    "다음" -> {
+                        if (currentStepIndex < steps.lastIndex) {
+                            currentStepIndex++
+                        } else {
+                            showDialog = true
+                        }
+                    }
                     "이전" -> currentStepIndex = if (currentStepIndex > 0) currentStepIndex - 1 else -1
                     "멈춰" -> {
                         youTubePlayerRef.value?.pause()
@@ -118,6 +124,17 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                     "타이머 과정" -> {
                         val withTimer = timers.indexOfFirst { it != null }
                         if (withTimer != -1) currentStepIndex = withTimer
+                    }
+                    "요리 끝" -> showDialog = true
+                    "홈으로" -> navController.navigate("home") {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                    "대쉬보드로" -> navController.navigate("dashboard") {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
                     }
                 }
             },

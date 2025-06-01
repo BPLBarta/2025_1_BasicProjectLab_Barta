@@ -1,5 +1,6 @@
 package com.example.barta
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -36,6 +37,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import com.example.barta.data.getPreparationText
+import com.example.barta.ui.player.PlayerActivity
 
 @Composable
 fun DashboardScreen(navController: NavController, modifier: Modifier = Modifier) {
@@ -175,7 +177,13 @@ fun DashboardScreen(navController: NavController, modifier: Modifier = Modifier)
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .clickable { navController.navigate("player/$videoId") },
+                            .clickable {
+                                val intent = Intent(context, PlayerActivity::class.java).apply {
+                                    putExtra("videoId", videoId)
+                                }
+                                context.startActivity(intent)
+                            }
+                        ,
                         elevation = 4.dp
                     ) {
                         Box(
