@@ -33,13 +33,15 @@ import com.example.barta.ui.component.TimerComponent
 import com.example.barta.ui.theme.LocalBartaPalette
 import com.example.barta.util.fetchYoutubeDescription
 import com.example.barta.util.parseChaptersFromDescription
-import com.example.barta.util.getDefaultStepSummaries
+import com.example.barta.util.getStepSummaries
+
 import com.example.barta.util.Step
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import kotlinx.coroutines.delay
+import com.example.barta.data.getPreparationText
 
 @Composable
 fun PlayerScreen(videoId: String, navController: NavController) {
@@ -77,7 +79,8 @@ fun PlayerScreen(videoId: String, navController: NavController) {
         if (steps.isEmpty()) return@LaunchedEffect
         summaries.clear()
         timers.clear()
-        val defaultSummaries = getDefaultStepSummaries()
+        val defaultSummaries = getStepSummaries(videoId)
+
         steps.forEachIndexed { index, _ ->
             val (summary, timerSec) = defaultSummaries.getOrElse(index) {
                 "기본적인 요리 과정입니다." to null

@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.example.barta.ui.theme.LocalBartaPalette
 
 @Composable
@@ -34,20 +36,22 @@ fun RecipeSubtitle(
                 clip = false
             )
             .clip(RoundedCornerShape(25.dp))
-            .wrapContentSize()
+            .height(IntrinsicSize.Min) // 🔸 이 줄이 핵심입니다!
     ) {
         // STEP 부분
         Box(
             modifier = Modifier
                 .background(stepBackgroundColor)
-                .weight(0.17f),
+                .weight(0.17f)
+                .fillMaxHeight(), // 🔸 높이 맞추기
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "STEP ${"%02d".format(stepNumber)}",
-                style = MaterialTheme.typography.subtitle2, // subtitle1 → subtitle2 로 변경
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
                 color = Color.White,
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
             )
         }
 
@@ -56,12 +60,12 @@ fun RecipeSubtitle(
             modifier = Modifier
                 .background(descriptionBackgroundColor)
                 .weight(0.83f)
-                .wrapContentHeight(),
+                .fillMaxHeight(), // 🔸 높이 맞추기
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = description,
-                style = MaterialTheme.typography.subtitle2, // subtitle1 → subtitle2 로 변경
+                fontSize = 12.sp,
                 color = color.textBlack,
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)
             )

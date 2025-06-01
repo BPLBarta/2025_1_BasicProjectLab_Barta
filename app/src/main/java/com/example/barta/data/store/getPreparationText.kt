@@ -30,9 +30,26 @@ fun getPreparationText(videoId: String): PreparationData {
         )
         "rK3PdxlGTt8" -> PreparationData(
             title = "감바스",
-            "🥩 준비물: 소고기, 마늘, 간장\n🍽 조리 도구: 칼, 도마")
-        "gpt001" -> PreparationData(
-            title = "토마토 파스타","🍝 준비물: 파스타면, 토마토소스, 양파\n🔪 조리 도구: 냄비, 팬, 칼")
+            ingredients =
+                "재료 (3~4인분)\n" +
+                        "큰새우 12미\n" +
+                        "대파 2단\n" +
+                        "양송이버섯 200g\n" +
+                        "마늘 120g\n" +
+                        "바게트 1개\n\n" +
+
+                        "초간단 토핑양념\n" +
+                        "무염버터 100g\n" +
+                        "타임 1.5tsp\n" +
+                        "로즈마리 2tsp\n\n" +
+
+                        "새우양념\n" +
+                        "파프리카 파우더 0.5tsp\n" +
+                        "미원 약간\n" +
+                        "혼다시 1/4tsp\n" +
+                        "레몬껍질 약간"
+        )
+
         else -> PreparationData(title = "알 수 없는 요리","준비물이 등록되지 않았습니다.")
     }
 }
