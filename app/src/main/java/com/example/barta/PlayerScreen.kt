@@ -131,7 +131,7 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                     }
                     "자막 꺼", "자막 꺼줘", "자막 꺼주세요" -> showSubtitle = false
                     "자막 켜", "자막 켜줘", "자막 켜주세요" -> showSubtitle = true
-                    
+
                     "요리 끝" -> {
                         currentStepIndex = steps.lastIndex
                         showDialog = true
@@ -308,13 +308,14 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                                 .zIndex(1f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            if (showSubtitle) {
+                            if (showSubtitle && currentStepIndex >= 0) {
                                 RecipeSubtitle(
                                     stepNumber = currentStepIndex + 1,
-                                    description = summaries.getOrNull(currentStepIndex) ?: "요약 없음",
+                                    description = summaries.getOrNull(currentStepIndex) ?: "",
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                                 )
                             }
+
                             ProgressBarComponet(
                                 progress = (currentStepIndex + 1).toFloat() / steps.size.toFloat(),
                                 modifier = Modifier

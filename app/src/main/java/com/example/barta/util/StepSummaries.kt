@@ -4,8 +4,8 @@ package com.example.barta.util
 fun getStepSummaries(videoId: String): List<Pair<String, Int?>> {
     return when (videoId) {
         "_VqTaMZwj7I" -> listOf(
-            "양념장을 하루 전날 미리 만들어 숙성시킵니다." to null,
-            "부대찌개에 들어갈 재료들을 준비하고 손질합니다." to null,
+            "고춧가루, 후추, 다진마늘, 생강, 소금, 미원을 섞어 양념장을 만듭니다." to null,
+            "양파는 길게 채썰고, 소시지는 어슷썰기로 썬다." to null,
             "재료들을 냄비에 보기 좋게 정리하여 담습니다." to null,
             "사골육수를 부어 센불에 끓인 뒤 약불로 줄여 5분간 더 끓입니다." to 300,
             "취향에 따라 다데기, 치즈, 김치를 추가하여 간을 맞춥니다." to null,
