@@ -28,8 +28,8 @@ fun getPreparationText(videoId: String): PreparationData {
                     "튤립햅 50g \n" +
                     "사골육수 900ml"
         )
-        "def456" -> PreparationData(
-            title = "소고기 조림",
+        "rK3PdxlGTt8" -> PreparationData(
+            title = "감바스",
             "🥩 준비물: 소고기, 마늘, 간장\n🍽 조리 도구: 칼, 도마")
         "gpt001" -> PreparationData(
             title = "토마토 파스타","🍝 준비물: 파스타면, 토마토소스, 양파\n🔪 조리 도구: 냄비, 팬, 칼")

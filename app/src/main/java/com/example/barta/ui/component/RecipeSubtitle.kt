@@ -22,7 +22,7 @@ fun RecipeSubtitle(
 ) {
     val color = LocalBartaPalette.current
     val stepBackgroundColor = color.primaryOrange2  // STEP 부분 배경색
-    val descriptionBackgroundColor = Color.White  // 설명 부분 배경색
+    val descriptionBackgroundColor = Color.White    // 설명 부분 배경색
 
     Row(
         modifier = modifier
@@ -45,7 +45,7 @@ fun RecipeSubtitle(
         ) {
             Text(
                 text = "STEP ${"%02d".format(stepNumber)}",
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle2, // subtitle1 → subtitle2 로 변경
                 color = Color.White,
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)
             )
@@ -61,7 +61,7 @@ fun RecipeSubtitle(
         ) {
             Text(
                 text = description,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle2, // subtitle1 → subtitle2 로 변경
                 color = color.textBlack,
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)
             )
