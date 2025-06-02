@@ -97,7 +97,7 @@ fun HomeScreen(navController: NavController, initialUrl: String = "", modifier: 
     }
 
     val showButton = isFocused && allowShowButton
-    val buttonBottomPadding = if (showButton) imeBottomDp + 335.dp else 100.dp
+    val buttonBottomPadding = if (showButton) imeBottomDp + 350.dp else 100.dp
 
     val contentModifier = if (isFocused) {
         Modifier.fillMaxSize()

@@ -6,6 +6,7 @@ import android.content.Context
 import android.speech.SpeechRecognizer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -271,33 +272,35 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                         // ✅ 여기 추가 (영상 안의 왼쪽 상단)
                         val rightTimer = timers.getOrNull(currentStepIndex)
 
-                        Box(
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .align(Alignment.TopStart)
                                 .padding(12.dp)
+                                .clickable(
+                                    indication = null, // ✅ Ripple 제거
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+                                    isListening = true
+                                    voiceRecognizer.start()
+                                }
                                 .zIndex(1f)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                BartaIcon(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clickable {
-                                            isListening = true
-                                            voiceRecognizer.start()
-                                        }
+                            BartaIcon(
+                                modifier = Modifier.size(40.dp) // 내부는 단순 사이즈만 부여
+                            )
+
+                            if (rightTimer != null && currentStepIndex >= 0) {
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                TimerComponent(
+                                    totalTime = rightTimer,
+                                    isRunning = timerRunning,
+                                    modifier = Modifier.size(44.dp)
                                 )
-
-                                if (rightTimer != null && currentStepIndex >= 0) {
-                                    Spacer(modifier = Modifier.width(8.dp))
-
-                                    TimerComponent(
-                                        totalTime = rightTimer,
-                                        isRunning = timerRunning,
-                                        modifier = Modifier.size(44.dp) // 타이머 크기 살짝 조정
-                                    )
-                                }
                             }
                         }
+
 
                         // ⬇️ 하단 자막 + 프로그레스바
                         Column(
