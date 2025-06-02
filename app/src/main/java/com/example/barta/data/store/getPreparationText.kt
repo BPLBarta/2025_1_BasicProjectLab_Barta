@@ -28,6 +28,53 @@ fun getPreparationText(videoId: String): PreparationData {
                     "튤립햅 50g \n" +
                     "사골육수 900ml"
         )
+        "Havl-7iMCgQ" -> PreparationData(
+            title = "김치찌개",
+            ingredients =
+                "준비재료\n" +
+                        "잘 익은 김치 1.2kg\n" +
+                        "돼지고기 꼬들살 400g\n" +
+                        "두부 150g\n" +
+                        "대파 1대\n" +
+                        "양파 1개\n" +
+                        "청양고추 3개\n" +
+                        "붉은 고추 1개\n" +
+                        "들기름 1큰술\n" +
+                        "다진 생강 1작은술\n" +
+                        "생수 2큰술\n\n" +
+
+                        "고기양념\n" +
+                        "국간장 1큰술\n" +
+                        "맛술 3큰술\n" +
+                        "매실청 1큰술\n\n" +
+
+                        "찌개양념\n" +
+                        "김치국물 1컵\n" +
+                        "고춧가루 2큰술\n" +
+                        "진간장 1큰술\n" +
+                        "다진 마늘 1큰술\n" +
+                        "들기름 1큰술\n" +
+                        "진한 쌀뜨물 4컵\n" +
+                        "생수 8컵\n\n" +
+
+                        "*1컵=200cc"
+        )
+        "wDGMkKjSVUg" -> PreparationData(
+            title = "까르보나라",
+            ingredients =
+                        "베이컨 5~6장\n" +
+                        "스파게티 면\n" +
+                        "양파 1/2개\n" +
+                        "이탈리안 파슬리 30g\n" +
+                        "노른자 1개\n" +
+                        "파르마지아노 레지아노 치즈 80g\n" +
+                        "생크림 250ml\n" +
+                        "치킨스톡 1개\n" +
+                        "화이트와인 약간\n" +
+                        "올리브오일 약간\n\n" +
+                        "* 생 파슬리가 없다면 건 파슬리 가루 사용 가능"
+        )
+
         "rK3PdxlGTt8" -> PreparationData(
             title = "감바스",
             ingredients =

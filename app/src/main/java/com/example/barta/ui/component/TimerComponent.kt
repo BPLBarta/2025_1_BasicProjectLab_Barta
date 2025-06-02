@@ -36,11 +36,11 @@ fun TimerComponent(
         }
     }
 
-    val timeText = if (timeLeft < 60) {
-        "${timeLeft}초"
+    val timeText = if (totalTime < 60) {
+        "${totalTime}초"
     } else {
-        val min = timeLeft / 60
-        val sec = timeLeft % 60
+        val min = totalTime / 60
+        val sec = totalTime % 60
         if (sec == 0) "${min}분" else "${min}분\n${sec}초"
     }
 
@@ -55,7 +55,7 @@ fun TimerComponent(
         CircularProgressIndicator(
             progress = progress,
             color = color.timerProgress,
-            strokeWidth = 6.dp,
+            strokeWidth = 4.dp,
             modifier = Modifier.fillMaxSize()
         )
         Text(

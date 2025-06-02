@@ -99,24 +99,24 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
             )
             CompositionLocalProvider(
                 LocalTextSelectionColors provides customTextSelectionColors
-                ) {
-                    TextField(
-                        value = id,
-                        onValueChange = { id = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        interactionSource = idInteraction,
-                        textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange1),
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = color.backgroundWhite,
-                            focusedIndicatorColor = idUnderlineColor,
-                            unfocusedIndicatorColor = idUnderlineColor,
-                            disabledIndicatorColor = idUnderlineColor,
-                            textColor = color.primaryOrange1,
-                            cursorColor = color.primaryOrange1
-                        )
+            ) {
+                TextField(
+                    value = id,
+                    onValueChange = { id = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    interactionSource = idInteraction,
+                    textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange1),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = color.backgroundWhite,
+                        focusedIndicatorColor = idUnderlineColor,
+                        unfocusedIndicatorColor = idUnderlineColor,
+                        disabledIndicatorColor = idUnderlineColor,
+                        textColor = color.primaryOrange1,
+                        cursorColor = color.primaryOrange1
                     )
-                }
+                )
+            }
 
             if (!idFocused && id.isEmpty()) {
                 Text(
@@ -132,26 +132,34 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
         // 비밀번호 입력창
         Box(modifier = Modifier.fillMaxWidth()) {
-            TextField(
-                value = password,
-                onValueChange = { password = it },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                interactionSource = pwInteraction,
-                visualTransformation = PasswordVisualTransformation(),
-                trailingIcon = {
-                    Box(modifier = Modifier.size(24.dp))
-                },
-                textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange1),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = color.backgroundWhite,
-                    focusedIndicatorColor = pwUnderlineColor,
-                    unfocusedIndicatorColor = pwUnderlineColor,
-                    disabledIndicatorColor = pwUnderlineColor,
-                    textColor = color.primaryOrange1,
-                    cursorColor = color.primaryOrange1
-                )
+            val customTextSelectionColors = TextSelectionColors(
+                handleColor = color.primaryOrange1,
+                backgroundColor = color.primaryOrange1
             )
+            CompositionLocalProvider(
+                LocalTextSelectionColors provides customTextSelectionColors
+            ) {
+                TextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    interactionSource = pwInteraction,
+                    visualTransformation = PasswordVisualTransformation(),
+                    trailingIcon = {
+                        Box(modifier = Modifier.size(24.dp))
+                    },
+                    textStyle = MaterialTheme.typography.body1.copy(color = color.primaryOrange1),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = color.backgroundWhite,
+                        focusedIndicatorColor = pwUnderlineColor,
+                        unfocusedIndicatorColor = pwUnderlineColor,
+                        disabledIndicatorColor = pwUnderlineColor,
+                        textColor = color.primaryOrange1,
+                        cursorColor = color.primaryOrange1
+                    )
+                )
+            }
 
             if (!pwFocused && password.isEmpty()) {
                 Text(

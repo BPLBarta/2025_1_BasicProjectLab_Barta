@@ -113,6 +113,10 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                         }
                     }
                     "이전" -> currentStepIndex = if (currentStepIndex > 0) currentStepIndex - 1 else -1
+                    "시작" -> {
+                        youTubePlayerRef.value?.play()
+                        isPlaying = true
+                    }
                     "멈춰" -> {
                         youTubePlayerRef.value?.pause()
                         isPlaying = false
@@ -125,7 +129,13 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                         val withTimer = timers.indexOfFirst { it != null }
                         if (withTimer != -1) currentStepIndex = withTimer
                     }
-                    "요리 끝" -> showDialog = true
+                    "자막 꺼", "자막 꺼줘", "자막 꺼주세요" -> showSubtitle = false
+                    "자막 켜", "자막 켜줘", "자막 켜주세요" -> showSubtitle = true
+
+                    "요리 끝" -> {
+                        currentStepIndex = steps.lastIndex
+                        showDialog = true
+                    }
                     "홈으로" -> navController.navigate("home") {
                         popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                         launchSingleTop = true
@@ -219,12 +229,12 @@ fun PlayerScreen(videoId: String, navController: NavController) {
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // ⏱ 타이머 컴포넌트 (살짝 크게)
-                    TimerComponent(
-                        totalTime = rightTimer,
-                        isRunning = timerRunning,
-                        modifier = Modifier.size(52.dp)
-                    )
+//                    // ⏱ 타이머 컴포넌트 (살짝 크게)
+//                    TimerComponent(
+//                        totalTime = rightTimer,
+//                        isRunning = timerRunning,
+//                        modifier = Modifier.size(52.dp)
+//                    )
                 }
             }
         }
@@ -259,19 +269,34 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                         )
 
                         // ✅ 여기 추가 (영상 안의 왼쪽 상단)
+                        val rightTimer = timers.getOrNull(currentStepIndex)
+
                         Box(
                             modifier = Modifier
                                 .align(Alignment.TopStart)
                                 .padding(12.dp)
                                 .zIndex(1f)
                         ) {
-                            BartaIcon(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clickable {
-                                        isListening = true
-                                        voiceRecognizer.start() }
-                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                BartaIcon(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clickable {
+                                            isListening = true
+                                            voiceRecognizer.start()
+                                        }
+                                )
+
+                                if (rightTimer != null && currentStepIndex >= 0) {
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    TimerComponent(
+                                        totalTime = rightTimer,
+                                        isRunning = timerRunning,
+                                        modifier = Modifier.size(44.dp) // 타이머 크기 살짝 조정
+                                    )
+                                }
+                            }
                         }
 
                         // ⬇️ 하단 자막 + 프로그레스바
@@ -283,13 +308,14 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                                 .zIndex(1f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            if (showSubtitle) {
+                            if (showSubtitle && currentStepIndex >= 0) {
                                 RecipeSubtitle(
                                     stepNumber = currentStepIndex + 1,
-                                    description = summaries.getOrNull(currentStepIndex) ?: "요약 없음",
+                                    description = summaries.getOrNull(currentStepIndex) ?: "",
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                                 )
                             }
+
                             ProgressBarComponet(
                                 progress = (currentStepIndex + 1).toFloat() / steps.size.toFloat(),
                                 modifier = Modifier
@@ -316,22 +342,30 @@ fun PlayerScreen(videoId: String, navController: NavController) {
             onDismissRequest = { showDialog = false },
             backgroundColor = Color(0xFFEFEFEF),
             shape = RoundedCornerShape(15.dp),
-            title = {
-                Text(
-                    text = "요리가 완성되었습니다!\n홈 화면으로 돌아가시겠어요?",
-                    style = MaterialTheme.typography.subtitle2,
-                    color = color.textBlack,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            confirmButton = {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Spacer(modifier = Modifier.height(30.dp))
+
+            buttons = {
+                Column(
+                    modifier = Modifier
+                        .width(289.dp)
+                        .padding(top = 36.dp, bottom = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "요리가 완성 되었습니다!\n홈 화면으로 돌아가시겠어요?",
+                        style = MaterialTheme.typography.subtitle1,
+                        color = color.textBlack,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(bottom = 16.dp)
+                            .fillMaxWidth()
+                    )
+
                     Button(
                         onClick = {
                             navController.navigate("home") {
-                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
                                 launchSingleTop = true
                                 restoreState = true
                             }
@@ -341,13 +375,18 @@ fun PlayerScreen(videoId: String, navController: NavController) {
                             contentColor = color.textWhite
                         ),
                         shape = RoundedCornerShape(50),
-                        modifier = Modifier.width(136.dp).height(36.dp)
+                        modifier = Modifier
+                            .width(136.dp)
+                            .height(36.dp)
                     ) {
-                        Text("돌아가기", style = MaterialTheme.typography.subtitle2)
+                        Text(
+                            text = "돌아가기",
+                            style = MaterialTheme.typography.subtitle1
+                        )
                     }
                 }
-            },
-            dismissButton = {}
+            }
         )
     }
+
 }
