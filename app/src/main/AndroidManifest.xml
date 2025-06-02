@@ -3,6 +3,9 @@
         xmlns:tools="http://schemas.android.com/tools">
     <!-- ✅ 인터넷 권한 추가 -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- ✅ 마이크 권한 추가 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
 
     <application
             android:allowBackup="true"
@@ -20,6 +23,15 @@
                 android:label="@string/title_activity_login" />
         <!-- &lt;!&ndash; ✅ PlayerActivity 등록 &ndash;&gt; -->
         <!-- <activity android:name=".ui.player.PlayerActivity" /> -->
+
+
+
+        <activity
+            android:name=".ui.player.PlayerActivity"
+            android:screenOrientation="landscape"
+            android:exported="true"
+            android:theme="@style/Theme.BARTA" />
+
         <activity
                 android:name=".MainActivity"
                 android:exported="true"

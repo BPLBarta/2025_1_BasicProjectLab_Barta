@@ -6,11 +6,13 @@ import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,9 +35,9 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .background(color.backgroundWhite)
-            .padding(horizontal = 30.dp)
+            .padding(horizontal = 24.dp)
     ) {
-        Spacer(modifier = Modifier.height(60.dp)) // 마이페이지 위 빈공간
+        Spacer(modifier = Modifier.height(40.dp)) // 마이페이지 위 빈공간
 
         // 상단 제목
         Text(
@@ -71,7 +73,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
         Button(
             onClick = { /* 편집 동작 */ },
             shape = RoundedCornerShape(50),
-            colors = ButtonDefaults.buttonColors(backgroundColor = color.primaryOrange),
+            colors = ButtonDefaults.buttonColors(backgroundColor = color.primaryOrange1),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(36.dp)
@@ -109,14 +111,16 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.subtitle2,
             color = color.highlightRed,
             modifier = Modifier
-                .clickable {
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
                     val sharedPref = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
                     sharedPref.edit().putBoolean("isLoggedIn", false).apply()
 
-                    // MainActivity 재시작
                     val intent = Intent(context, MainActivity::class.java)
                     context.startActivity(intent)
-                    (context as? Activity)?.finish()  // 현재 화면 종료
+                    (context as? Activity)?.finish()
                 }
                 .padding(vertical = 8.dp)
         )
@@ -124,10 +128,15 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
 
         Text(
             text = "계정탈퇴",
-            style=MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.subtitle2,
             color = color.highlightRed,
             modifier = Modifier
-                .clickable { /* 계정탈퇴 동작 */ }
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    // 계정탈퇴 동작
+                }
                 .padding(vertical = 8.dp)
         )
     }
@@ -152,7 +161,12 @@ fun SettingItem(iconId: Int, title: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { /* 클릭 동작 */ }
+            .clickable(
+                indication = null, // ✅ Ripple 제거
+                interactionSource = remember { MutableInteractionSource() } // ✅ 클릭은 유지
+            ) {
+                // TODO: 클릭 동작
+            }
     ) {
         Icon(
             painter = painterResource(id = iconId),
@@ -160,8 +174,8 @@ fun SettingItem(iconId: Int, title: String) {
             tint = palette.textBlack,
             modifier = Modifier.size(16.dp)
         )
-        Spacer(modifier = Modifier.width(14.dp)) // 아이콘 글자 사이
-        Text( // 아이콘 옆 글자들
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(
             text = title,
             style = MaterialTheme.typography.subtitle2,
             color = palette.textBlack,

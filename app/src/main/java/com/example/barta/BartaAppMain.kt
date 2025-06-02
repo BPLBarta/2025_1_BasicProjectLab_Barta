@@ -12,6 +12,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import androidx.compose.ui.unit.dp
 import com.example.barta.ui.theme.LocalBartaPalette
+import androidx.navigation.navArgument
 
 @Composable
 fun BartaAppMain() {
@@ -49,7 +50,7 @@ fun BartaAppMain() {
                             )
                         },
                         selected = selected,
-                        selectedContentColor = color.primaryOrange,
+                        selectedContentColor = color.primaryOrange1,
                         unselectedContentColor = color.textGray2,
                         onClick = {
                             navController.navigate(NavigationBar.route) {
@@ -67,15 +68,29 @@ fun BartaAppMain() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationBar.Home.route,
-            modifier = Modifier.padding(innerPadding)
+            startDestination = NavigationBar.Home.route
         ) {
             composable(NavigationBar.Dashboard.route) {
                 DashboardScreen(navController, modifier = Modifier.padding(innerPadding))
             }
-            composable(NavigationBar.Home.route) {
-                HomeScreen(navController, modifier = Modifier.padding(innerPadding))
+//            composable(NavigationBar.Home.route) {
+//                HomeScreen(navController, modifier = Modifier.padding(innerPadding))
+//            }
+            // ✅ URL 파라미터 받는 Home 경로로 변경
+            composable(
+                route = "${NavigationBar.Home.route}?url={url}",
+                arguments = listOf(
+                    navArgument("url") { defaultValue = "" }
+                )
+            ) { backStackEntry ->
+                val url = backStackEntry.arguments?.getString("url") ?: ""
+                HomeScreen(
+                    navController = navController,
+                    modifier = Modifier.padding(innerPadding),
+                    initialUrl = url
+                )
             }
+
             composable(NavigationBar.Profile.route) {
                 ProfileScreen(navController, modifier = Modifier.padding(innerPadding))
             }
