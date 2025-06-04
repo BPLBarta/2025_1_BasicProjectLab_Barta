@@ -8,11 +8,12 @@ import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
-import androidx.compose.ui.unit.dp
-import com.example.barta.ui.theme.LocalBartaPalette
 import androidx.navigation.navArgument
+import com.example.barta.ui.theme.LocalBartaPalette
 
 @Composable
 fun BartaAppMain() {
@@ -31,7 +32,10 @@ fun BartaAppMain() {
                 modifier = Modifier.height(60.dp)
             ) {
                 items.forEach { NavigationBar ->
-                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == NavigationBar.route
+                    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+                    val selected = currentDestination?.hierarchy?.any {
+                        it.route?.startsWith(NavigationBar.route) == true
+                    } ?: false
 
                     BottomNavigationItem(
                         icon = {
@@ -73,10 +77,7 @@ fun BartaAppMain() {
             composable(NavigationBar.Dashboard.route) {
                 DashboardScreen(navController, modifier = Modifier.padding(innerPadding))
             }
-//            composable(NavigationBar.Home.route) {
-//                HomeScreen(navController, modifier = Modifier.padding(innerPadding))
-//            }
-            // ✅ URL 파라미터 받는 Home 경로로 변경
+
             composable(
                 route = "${NavigationBar.Home.route}?url={url}",
                 arguments = listOf(
@@ -94,11 +95,11 @@ fun BartaAppMain() {
             composable(NavigationBar.Profile.route) {
                 ProfileScreen(navController, modifier = Modifier.padding(innerPadding))
             }
+
             composable("player/{videoId}") { backStackEntry ->
                 val videoId = backStackEntry.arguments?.getString("videoId") ?: ""
                 PlayerScreen(videoId = videoId, navController = navController)
             }
-
         }
     }
 }
