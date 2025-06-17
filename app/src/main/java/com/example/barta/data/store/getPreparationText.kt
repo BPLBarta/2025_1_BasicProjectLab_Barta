@@ -97,6 +97,22 @@ fun getPreparationText(videoId: String): PreparationData {
                         "레몬껍질 약간"
         )
 
-        else -> PreparationData(title = "알 수 없는 요리","준비물이 등록되지 않았습니다.")
-    }
+        else -> PreparationData(title = "갈비찜","""
+            소갈비 1kg  
+            무 200g  
+            당근 100g  
+            밤 4알  
+            표고버섯 3개  
+            대추 5개  
+            양파 100g  
+            대파 50g  
+            다진 마늘 15g  
+            간장 100ml  
+            설탕 2큰술  
+            맛술 2큰술  
+            참기름 1큰술  
+            후추 약간  
+            물 500ml
+            """)
+        }
 }
